@@ -1,25 +1,32 @@
 #include <bits/stdc++.h>
 #include "helper.h"
-using namespace std;
 
+using namespace std;
 
 class Vehicle
 {
 private:
     string plateNumber;
-    string vehicleType;
+    int vehicleType;
     string ownerName;
-    string slot;
+    int slot;
 
 public:
-    Vehicle(const string &plateNumber,const string &vehicleType,const string &ownerName): plateNumber(plateNumber),  vehicleType(vehicleType),ownerName(ownerName) {}
+    Vehicle(const string &plateNumber,
+            const int &vehicleType,
+            const string &ownerName)
+        : plateNumber(plateNumber),
+          vehicleType(vehicleType),
+          ownerName(ownerName)
+    {
+    }
 
     string getPlateNumber() const
     {
         return plateNumber;
     }
 
-    string getVehicleType() const
+    int getVehicleType() const
     {
         return vehicleType;
     }
@@ -28,12 +35,20 @@ public:
     {
         return ownerName;
     }
+
+    void setTheSlot(int code)
+    {
+        slot = code;
+    }
 };
+
 
 class ParkingManagementSystem
 {
 private:
     bool running = false;
+    static vector<vector<vector<int>>> binaryMap;
+
     inline static unordered_map<string, string> adminData{
         {"CSS", "ChanduChai"}};
 
@@ -58,17 +73,44 @@ private:
         cin >> plateNumber;
         toLowerString(plateNumber);
 
-        string vehicleType;
+        string vehicleTypeString;
         cout << "Enter the Vehicle Type: ";
-        cin >> vehicleType;
-        toLowerString(vehicleType);
+        cin >> vehicleTypeString;
+        toLowerString(vehicleTypeString);
+        int vehicleType = VC(vehicleTypeString);
 
         string ownerName;
         cout << "Enter the Name of Owner: ";
         cin >> ownerName;
         toLowerString(ownerName);
 
-        Vehicle(plateNumber,vehicleType,ownerName);
+
+
+        Vehicle vehicle(plateNumber, vehicleType, ownerName);
+
+        vector<int> compatibleSlots = VehicleToSlotsCode(vehicle.getVehicleType());
+
+        cout << "\nVehicle Details:\n";
+        cout << "Plate Number: " << vehicle.getPlateNumber() << '\n';
+        cout << "Vehicle Type: " << vehicle.getVehicleType() << '\n';
+        cout << "Owner Name: " << vehicle.getOwnerName() << '\n';
+
+        cout << "Compatible Slot Types: ";
+
+        for (int slot : compatibleSlots)
+        {
+            cout << invertSC(slot) << ' ';
+        }
+
+        cout << '\n';
+
+        cout << "Choose a slot  \n";
+        // Feature :- add price with the slots
+        int ChoosenSlot;
+        cin >> ChoosenSlot;
+        vehicle.setTheSlot(ChoosenSlot);
+
+        // Feature :- you can add prefence for something and use priority queue in searching
     }
 
     void findVehicle()
@@ -101,18 +143,16 @@ private:
             adminData[username] == password)
         {
             cout << "Admin login successful.\n";
+            AdminContol();
         }
         else
         {
             cout << "Invalid username or password.\n";
         }
-
-        AdminContol();
     }
 
     void AdminContol()
     {
-
     }
 
 public:
@@ -167,6 +207,8 @@ public:
         cout << "Parking system turned off.\n";
     }
 };
+
+vector<vector<vector<int>>> ParkingManagementSystem::binaryMap;
 
 int main()
 {
