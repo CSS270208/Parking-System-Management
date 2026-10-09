@@ -12,15 +12,18 @@ void toLowerString(string &s)
     }
 }
 
-int VC(const string &type)
+inline int VC(const string &type)
 {
     if (type == "bike")
         return 0;
-    else if (type == "car")
+
+    if (type == "car")
         return 1;
-    else if (type == "truck")
+
+    if (type == "truck")
         return 2;
-    else if (type == "ev")
+
+    if (type == "ev")
         return 3;
 
     return -1;
@@ -30,11 +33,14 @@ string invertVC(int x)
 {
     if (x == 0)
         return "bike";
-    else if (x == 1)
+
+    if (x == 1)
         return "car";
-    else if (x == 2)
+
+    if (x == 2)
         return "truck";
-    else if (x == 3)
+
+    if (x == 3)
         return "ev";
 
     return "unknown";
@@ -44,11 +50,14 @@ int SC(const string &s)
 {
     if (s == "bike")
         return 0;
-    else if (s == "compact")
+
+    if (s == "compact")
         return 1;
-    else if (s == "large")
+
+    if (s == "large")
         return 2;
-    else if (s == "ev")
+
+    if (s == "ev")
         return 3;
 
     return -1;
@@ -58,35 +67,21 @@ string invertSC(int x)
 {
     if (x == 0)
         return "bike";
-    else if (x == 1)
+
+    if (x == 1)
         return "compact";
-    else if (x == 2)
+
+    if (x == 2)
         return "large";
-    else if (x == 3)
+
+    if (x == 3)
         return "ev";
 
     return "unknown";
 }
 
-vector<int> VehicleToSlotsString(const string &type)
-{
-    int vehicleType = VC(type);
-
-    if (vehicleType == 0)
-        return {0, 1};
-
-    else if (vehicleType == 1)
-        return {1};
-
-    else if (vehicleType == 2)
-        return {2};
-
-    else if (vehicleType == 3)
-        return {2, 3};
-
-    return {};
-}
-vector<int> VehicleToSlotsCode(const int &code)
+// Vehicle code -> compatible slot codes.
+vector<int> VehicleToSlotsCode(int code)
 {
     if (code == 0)
         return {0, 1};
@@ -103,4 +98,14 @@ vector<int> VehicleToSlotsCode(const int &code)
     return {};
 }
 
+// Vehicle string -> compatible slot codes.
+vector<int> VehicleToSlotsString(const string &type)
+{
+    return VehicleToSlotsCode(VC(type));
+}
+
+
+// size to slot string
+
+// string to slot size
 #endif
