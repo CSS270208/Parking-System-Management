@@ -4,22 +4,35 @@
 #include <bits/stdc++.h>
 #include <filesystem>
 
+#include "helper.h"
+#include "uid.h"
+
 using namespace std;
 
-namespace fs = std::filesystem;
+class ParkingSlot
+{
+public:
+    UID uid;
+    int area;
+    bool occupied = false;
+    string plateNumber;
+
+    ParkingSlot(UID id, int a) : uid(id), area(a)
+    {
+    }
+};
 
 inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
 {
     binaryMap.clear();
 
-    int floorNumber = 1;
+    int floor = 1;
 
     while (true)
     {
-        string file = "floor" + to_string(floorNumber) + ".txt";
-        fs::path filePath = fs::path("Maps") / file;
+        string file = "Maps/floor" + to_string(floor) + ".txt";
 
-        ifstream hin(filePath);
+        ifstream hin(file);
 
         if (!hin)
             break;
@@ -29,49 +42,64 @@ inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
 
         while (getline(hin, line))
         {
-            istringstream iss(line);
-
+            stringstream ss(line);
             vector<int> row;
             int value;
 
-            while (iss >> value)
+            while (ss >> value)
             {
+                if (value != 0 && value != 1)
+                {
+                    cout << "Invalid map value in " << file << '\n';
+                    return false;
+                }
+
                 row.push_back(value);
             }
 
             if (!row.empty())
-            {
                 floorMap.push_back(row);
+        }
+
+        if (floorMap.empty())
+            return false;
+
+        int columns = floorMap[0].size();
+
+        for (auto row : floorMap)
+        {
+            if (row.size() != columns)
+            {
+                cout << "Inconsistent row width in " << file << '\n';
+                return false;
             }
         }
 
         binaryMap.push_back(floorMap);
-
-        floorNumber++;
+        floor++;
     }
 
     return !binaryMap.empty();
 }
 
-int sizeOfSlot(vector<vector<int>> mat, int sr, int sc)
+inline int sizeOfSlot(
+    const vector<vector<int>> &mat,
+    int sr,
+    int sc,
+    vector<vector<bool>> &visited)
 {
-    int m = mat.size();
-
-    if (m == 0 || mat[0].empty())
-        return 0;
-
-    int n = mat[0].size();
-
-    if (sr < 0 || sr >= m || sc < 0 || sc >= n || mat[sr][sc] != 1) return 0;
+    int rows = mat.size();
+    int cols = mat[0].size();
 
     queue<pair<int, int>> q;
+
     q.push({sr, sc});
+    visited[sr][sc] = true;
 
-    mat[sr][sc] = 2;
-    int cnt = 1;
+    int count = 1;
 
-    int dy[] = {1, -1, 0, 0};
-    int dx[] = {0, 0, 1, -1};
+    int dr[] = {1, -1, 0, 0};
+    int dc[] = {0, 0, 1, -1};
 
     while (!q.empty())
     {
@@ -80,19 +108,71 @@ int sizeOfSlot(vector<vector<int>> mat, int sr, int sc)
 
         for (int i = 0; i < 4; i++)
         {
-            int nr = r + dy[i];
-            int nc = c + dx[i];
+            int nr = r + dr[i];
+            int nc = c + dc[i];
 
-            if (nr >= 0 && nr < m && nc >= 0 && nc < n && mat[nr][nc] == 1)
+            if (nr >= 0 && nr < rows &&
+                nc >= 0 && nc < cols &&
+                mat[nr][nc] == 1 &&
+                !visited[nr][nc])
             {
+                visited[nr][nc] = true;
                 q.push({nr, nc});
-                mat[nr][nc] = 2;
-                cnt++;
+                count++;
             }
         }
     }
 
-    return cnt;
+    return count;
+}
+
+inline void scanMap(
+    const vector<vector<vector<int>>> &binaryMap,
+    vector<ParkingSlot> &parkingSlots,
+    unordered_map<string, int> &slotIndex)
+{
+    parkingSlots.clear();
+    slotIndex.clear();
+
+    vector<vector<int>> counters(binaryMap.size(), vector<int>(4, 0));
+
+    for (int f = 0; f < binaryMap.size(); f++)
+    {
+        const auto &mat = binaryMap[f];
+
+        vector<vector<bool>> visited(
+            mat.size(),
+            vector<bool>(mat[0].size(), false));
+
+        for (int r = 0; r < mat.size(); r++)
+        {
+            for (int c = 0; c < mat[r].size(); c++)
+            {
+                if (mat[r][c] == 0 || visited[r][c])
+                    continue;
+
+                int area = sizeOfSlot(mat, r, c, visited);
+
+                int slotType = slotTypeFromArea(area);
+
+                if (slotType == -1)
+                {
+                    cout << "Unknown area: " << area
+                         << " on floor " << f + 1 << '\n';
+                    continue;
+                }
+
+                int number = ++counters[f][slotType];
+
+                UID uid(f + 1, slotType, number);
+
+                int index = parkingSlots.size();
+
+                parkingSlots.push_back({uid, area});
+                slotIndex[uid.toString()] = index;
+            }
+        }
+    }
 }
 
 #endif

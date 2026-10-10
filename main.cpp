@@ -1,8 +1,11 @@
 #include <bits/stdc++.h>
+
 #include "helper.h"
 #include "mapping.h"
+#include "uid.h"
 
 using namespace std;
+
 void print3DMatrix(const vector<vector<vector<int>>> &matrix);
 
 class Vehicle
@@ -14,13 +17,11 @@ private:
     int slot = -1;
 
 public:
-    Vehicle(const string &plateNumber,
-            int vehicleType,
-            const string &ownerName)
-        : plateNumber(plateNumber),
-          vehicleType(vehicleType),
-          ownerName(ownerName)
+    Vehicle(string plate, int type, string owner)
     {
+        plateNumber = plate;
+        vehicleType = type;
+        ownerName = owner;
     }
 
     string getPlateNumber() const
@@ -53,10 +54,16 @@ class ParkingManagementSystem
 {
 private:
     bool running = false;
-    vector<vector<vector<int>>> binaryMap;
-    vector<vector<int>> graphMap;
 
-    inline static unordered_map<string, string> adminData{
+    vector<vector<vector<int>>> binaryMap;
+
+    vector<ParkingSlot> parkingSlots;
+
+    unordered_map<string, int> slotIndex;
+
+    unordered_map<string, Vehicle> vehicles;
+
+    inline static unordered_map<string, string> adminData = {
         {"CSS", "ChanduChai"}};
 
     void showMenu()
@@ -72,81 +79,14 @@ private:
         cout << "Choose an option: ";
     }
 
-    void bookParking()
-    {
-        cout << "\n-> Book parking selected <-\n";
-
-        string plateNumber;
-        cout << "Enter the plate Number of Vehicle: ";
-        cin >> plateNumber;
-        toLowerString(plateNumber);
-
-        string vehicleTypeString;
-        cout << "Enter the Vehicle Type: ";
-        cin >> vehicleTypeString;
-        toLowerString(vehicleTypeString);
-
-        int vehicleType = VC(vehicleTypeString);
-
-        if (vehicleType == -1)
-        {
-            cout << "Invalid vehicle type.\n";
-            return;
-        }
-
-        string ownerName;
-        cout << "Enter the Name of Owner: ";
-        cin >> ownerName;
-        toLowerString(ownerName);
-
-        Vehicle vehicle(plateNumber, vehicleType, ownerName);
-
-        vector<int> compatibleSlots =
-            VehicleToSlotsCode(vehicle.getVehicleType());
-
-        cout << "\nVehicle Details:\n";
-        cout << "Plate Number: " << vehicle.getPlateNumber() << '\n';
-        cout << "Vehicle Type: " << invertVC(vehicle.getVehicleType()) << '\n';
-        cout << "Owner Name: " << vehicle.getOwnerName() << '\n';
-
-        cout << "Compatible Slot Types: ";
-
-        for (int slot : compatibleSlots)
-        {
-            cout << invertSC(slot) << ' ';
-        }
-
-        cout << '\n';
-
-        cout << "Choose a slot type code: ";
-
-        int chosenSlot;
-        cin >> chosenSlot;
-
-        if (find(compatibleSlots.begin(),
-                 compatibleSlots.end(),
-                 chosenSlot) == compatibleSlots.end())
-        {
-            cout << "Incompatible slot type.\n";
-            return;
-        }
-
-        vehicle.setTheSlot(chosenSlot);
-
-        cout << "Slot type assigned: "
-             << invertSC(vehicle.getSlot()) << '\n';
-
-        // Next: Find an available physical slot using binaryMap.
-    }
+    void bookParking();
 
     void findVehicle()
     {
-        cout << "\n-> Find vehicle selected <-\n";
     }
 
     void takeVehicleOut()
     {
-        cout << "\n-> Take vehicle out selected <-\n";
     }
 
     void payAmount()
@@ -179,6 +119,20 @@ private:
 
     void AdminContol()
     {
+        int available = 0;
+        int occupied = 0;
+
+        for (ParkingSlot &slot : parkingSlots)
+        {
+            if (slot.occupied)
+                occupied++;
+            else
+                available++;
+        }
+
+        cout << "\nTotal slots: " << parkingSlots.size() << '\n';
+        cout << "Available slots: " << available << '\n';
+        cout << "Occupied slots: " << occupied << '\n';
     }
 
 public:
@@ -186,11 +140,15 @@ public:
     {
         if (!loadMap(binaryMap))
         {
-            cout << "Failed to load parking maps.\n";
+            cerr << "Failed to load parking maps.\n";
             return;
         }
-        //
-        print3DMatrix(binaryMap);
+
+        scanMap(binaryMap, parkingSlots, slotIndex);
+
+        cout << "\nDetected physical slots: "
+             << parkingSlots.size() << '\n';
+
         running = true;
 
         cout << "Welcome to CSS Parking Station!\n";
@@ -225,6 +183,7 @@ public:
                 break;
 
             case 6:
+                cout << "Map modification is not implemented yet.\n";
                 break;
 
             case 7:
@@ -242,7 +201,11 @@ public:
         running = false;
         cout << "Parking system turned off.\n";
     }
+
+    friend void ParkingManagementSystem::bookParking();
 };
+
+#include "bookParking.h"
 
 void print3DMatrix(const vector<vector<vector<int>>> &matrix)
 {
@@ -256,6 +219,7 @@ void print3DMatrix(const vector<vector<vector<int>>> &matrix)
             {
                 cout << matrix[f][r][c] << ' ';
             }
+
             cout << '\n';
         }
     }
@@ -265,5 +229,6 @@ int main()
 {
     ParkingManagementSystem parkingSystem;
     parkingSystem.on();
+
     return 0;
 }

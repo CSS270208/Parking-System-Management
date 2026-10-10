@@ -4,7 +4,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void toLowerString(string &s)
+inline void toLowerString(string &s)
 {
     for (char &c : s)
     {
@@ -29,7 +29,7 @@ inline int VC(const string &type)
     return -1;
 }
 
-string invertVC(int x)
+inline string invertVC(int x)
 {
     if (x == 0)
         return "bike";
@@ -46,7 +46,7 @@ string invertVC(int x)
     return "unknown";
 }
 
-int SC(const string &s)
+inline int SC(const string &s)
 {
     if (s == "bike")
         return 0;
@@ -63,7 +63,7 @@ int SC(const string &s)
     return -1;
 }
 
-string invertSC(int x)
+inline string invertSC(int x)
 {
     if (x == 0)
         return "bike";
@@ -80,32 +80,40 @@ string invertSC(int x)
     return "unknown";
 }
 
-// Vehicle code -> compatible slot codes.
-vector<int> VehicleToSlotsCode(int code)
+inline vector<int> VehicleToSlotsCode(int code)
 {
     if (code == 0)
         return {0, 1};
 
-    else if (code == 1)
+    if (code == 1)
         return {1};
 
-    else if (code == 2)
+    if (code == 2)
         return {2};
 
-    else if (code == 3)
+    if (code == 3)
         return {2, 3};
 
     return {};
 }
 
-// Vehicle string -> compatible slot codes.
-vector<int> VehicleToSlotsString(const string &type)
+inline int slotTypeFromArea(int area)
+{
+    if (area == 2)
+        return 0;
+
+    if (area == 6)
+        return 1;
+
+    if (area == 10)
+        return 2;
+
+    return -1;
+}
+
+inline vector<int> VehicleToSlotsString(const string &type)
 {
     return VehicleToSlotsCode(VC(type));
 }
 
-
-// size to slot string
-
-// string to slot size
 #endif
