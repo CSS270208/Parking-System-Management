@@ -78,11 +78,9 @@ void ParkingManagementSystem::bookParking()
 
     for (int i = 0; i < parkingSlots.size(); i++)
     {
-        if (parkingSlots[i].uid.getSlotType() != chosenSlot)
-            continue;
+        if (parkingSlots[i].uid.getSlotType() != chosenSlot) continue;
 
-        if (parkingSlots[i].occupied)
-            continue;
+        if (parkingSlots[i].occupied) continue;
 
         parkingSlots[i].occupied = true;
         parkingSlots[i].plateNumber = plateNumber;
@@ -90,10 +88,10 @@ void ParkingManagementSystem::bookParking()
         vehicle.setTheSlot(i);
 
         vehicles.emplace(plateNumber, vehicle);
-
+        parkingSlots[i].inTime = getCurrentTime();
+        parkingSlots[i].amountToPay = 0.0;
         cout << "\nParking successful.\n";
-        cout << "Assigned UID: "
-             << parkingSlots[i].uid.toString() << '\n';
+        cout << "Assigned UID: " << parkingSlots[i].uid.toString() << '\n';
 
         return;
     }

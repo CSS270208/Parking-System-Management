@@ -20,35 +20,25 @@ private:
     int slot = -1;
 
 public:
-    Vehicle(string plate, int type, string owner)
-        : plateNumber(plate),
-          vehicleType(type),
-          ownerName(owner)
-    {
-    }
+    Vehicle(string plate, int type, string owner) : plateNumber(plate),vehicleType(type),ownerName(owner) {}
 
-    string getPlateNumber() const
-    {
+    string getPlateNumber() const {
         return plateNumber;
     }
 
-    int getVehicleType() const
-    {
+    int getVehicleType() const {
         return vehicleType;
     }
 
-    string getOwnerName() const
-    {
+    string getOwnerName() const {
         return ownerName;
     }
 
-    int getSlot() const
-    {
+    int getSlot() const {
         return slot;
     }
 
-    void setTheSlot(int code)
-    {
+    void setTheSlot(int code) {
         slot = code;
     }
 };

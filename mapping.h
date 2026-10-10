@@ -3,12 +3,25 @@
 
 #include <bits/stdc++.h>
 #include <filesystem>
+#include <ctime>
+#include <sstream>
 
 #include "helper.h"
 #include "uid.h"
 
 using namespace std;
 
+string getCurrentTime()
+{
+
+    time_t now = time(nullptr);
+    tm *local = localtime(&now);
+    stringstream ss;
+    ss << put_time(local, "%d-%m-%Y %H:%M:%S");
+    // DD-MM-YYYY HH:MM:SS
+    return ss.str(); // DD-MM-YYY Y  H  H  :  M  M  :  S  S
+                     // 123456789 10 11 12 13 14 15 16 17 18
+}
 class ParkingSlot
 {
 public:
@@ -16,6 +29,10 @@ public:
     int area;
     bool occupied = false;
     string plateNumber;
+    bool paid;
+    double amountToPay ;
+    string inTime;
+    string outTime;
 
     ParkingSlot(UID id, int a) : uid(id), area(a)
     {
