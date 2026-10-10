@@ -47,8 +47,7 @@ void ParkingManagementSystem::bookParking()
 
     Vehicle vehicle(plateNumber, vehicleType, ownerName);
 
-    vector<int> compatibleSlots =
-        VehicleToSlotsCode(vehicle.getVehicleType());
+    vector<int> compatibleSlots = VehicleToSlotsCode(vehicle.getVehicleType());
 
     cout << "\nVehicle Details:\n";
     cout << "Plate Number: " << vehicle.getPlateNumber() << '\n';

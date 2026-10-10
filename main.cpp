@@ -8,6 +8,9 @@ using namespace std;
 
 void print3DMatrix(const vector<vector<vector<int>>> &matrix);
 
+class Admin;
+class Vehicle;
+
 class Vehicle
 {
 private:
@@ -18,10 +21,10 @@ private:
 
 public:
     Vehicle(string plate, int type, string owner)
+        : plateNumber(plate),
+          vehicleType(type),
+          ownerName(owner)
     {
-        plateNumber = plate;
-        vehicleType = type;
-        ownerName = owner;
     }
 
     string getPlateNumber() const
@@ -56,11 +59,9 @@ private:
     bool running = false;
 
     vector<vector<vector<int>>> binaryMap;
-
     vector<ParkingSlot> parkingSlots;
 
     unordered_map<string, int> slotIndex;
-
     unordered_map<string, Vehicle> vehicles;
 
     inline static unordered_map<string, string> adminData = {
@@ -80,60 +81,10 @@ private:
     }
 
     void bookParking();
-
-    void findVehicle()
-    {
-    }
-
-    void takeVehicleOut()
-    {
-    }
-
-    void payAmount()
-    {
-        cout << "\n-> Payment selected <-\n";
-    }
-
-    void admin()
-    {
-        string username, password;
-
-        cout << "\nUsername: ";
-        cin >> username;
-
-        cout << "Password: ";
-        cin >> password;
-
-        auto it = adminData.find(username);
-
-        if (it != adminData.end() && it->second == password)
-        {
-            cout << "Admin login successful.\n";
-            AdminContol();
-        }
-        else
-        {
-            cout << "Invalid username or password.\n";
-        }
-    }
-
-    void AdminContol()
-    {
-        int available = 0;
-        int occupied = 0;
-
-        for (ParkingSlot &slot : parkingSlots)
-        {
-            if (slot.occupied)
-                occupied++;
-            else
-                available++;
-        }
-
-        cout << "\nTotal slots: " << parkingSlots.size() << '\n';
-        cout << "Available slots: " << available << '\n';
-        cout << "Occupied slots: " << occupied << '\n';
-    }
+    void findVehicle();
+    void takeVehicleOut();
+    void payAmount();
+    void admin();
 
 public:
     void on()
@@ -202,10 +153,22 @@ public:
         cout << "Parking system turned off.\n";
     }
 
+    // Admin can access all private members of this class.
+    friend class Admin;
+
+    // Existing operation functions retain their friend access.
     friend void ParkingManagementSystem::bookParking();
+    friend void ParkingManagementSystem::findVehicle();
+    friend void ParkingManagementSystem::takeVehicleOut();
+    friend void ParkingManagementSystem::payAmount();
 };
 
+// Include implementations after the class definition.
 #include "bookParking.h"
+#include "takeVehicleOut.h"
+#include "findVehicle.h"
+#include "payAmount.h"
+#include "admin.h"
 
 void print3DMatrix(const vector<vector<vector<int>>> &matrix)
 {
@@ -228,6 +191,7 @@ void print3DMatrix(const vector<vector<vector<int>>> &matrix)
 int main()
 {
     ParkingManagementSystem parkingSystem;
+
     parkingSystem.on();
 
     return 0;
