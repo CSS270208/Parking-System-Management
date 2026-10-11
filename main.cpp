@@ -74,6 +74,7 @@ private:
     void findVehicle();
     void takeVehicleOut();
     void payAmount();
+    void payAmount(string);
     void admin();
 
 public:
@@ -151,6 +152,7 @@ public:
     friend void ParkingManagementSystem::findVehicle();
     friend void ParkingManagementSystem::takeVehicleOut();
     friend void ParkingManagementSystem::payAmount();
+    friend void ParkingManagementSystem::payAmount(string);
 };
 
 // Include implementations after the class definition.

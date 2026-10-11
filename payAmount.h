@@ -151,6 +151,9 @@ double totalBill(UID uid, int totalHours)
     return bill;
 }
 
+void paymentOption(int slotIndex, vector<ParkingSlot> &parkingSlots);
+void pay(int slotIndex, vector<ParkingSlot> &parkingSlots);
+
 void ParkingManagementSystem::payAmount()
 {
     cout << "Enter your car number\n";
@@ -167,8 +170,6 @@ void ParkingManagementSystem::payAmount()
         cout << "Vehicle Not Found\n";
         return;
     }
-
-    Vehicle &vehicle = (*it).second;
 
     int slotIndex = -1;
 
@@ -188,11 +189,19 @@ void ParkingManagementSystem::payAmount()
         return;
     }
 
+    if (parkingSlots[slotIndex].paid)
+    {
+        cout << "Payment already completed.\n";
+        return;
+    }
+
     UID uid = parkingSlots[slotIndex].uid;
 
     string currentTime = getCurrentTime();
 
-    int totalHours = hourCalculator(parkingSlots[slotIndex].inTime,currentTime);
+    int totalHours = hourCalculator(
+        parkingSlots[slotIndex].inTime,
+        currentTime);
 
     parkingSlots[slotIndex].amountToPay = totalBill(uid, totalHours);
 
@@ -205,8 +214,128 @@ void ParkingManagementSystem::payAmount()
     cout << "\n---------- PARKING BILL ----------\n";
     cout << "Vehicle Number : " << plateNumber << '\n';
     cout << "Parking Hours  : " << totalHours << '\n';
-    cout << "Amount         : Rs. " << parkingSlots[slotIndex].amountToPay << '\n';
-    cout << "----------------------------------\n";
+    cout << "Amount         : Rs. "
+         << parkingSlots[slotIndex].amountToPay << '\n';
+    cout << "----------------------------------\n\n";
+
+    paymentOption(slotIndex, parkingSlots);
 }
 
+void ParkingManagementSystem::payAmount(string plateNumber)
+{
+    auto it = vehicles.find(plateNumber);
+
+    if (it == vehicles.end())
+    {
+        cout << "Vehicle Not Found\n";
+        return;
+    }
+
+    int slotIndex = -1;
+
+    for (int i = 0; i < parkingSlots.size(); i++)
+    {
+        if (parkingSlots[i].occupied &&
+            parkingSlots[i].plateNumber == plateNumber)
+        {
+            slotIndex = i;
+            break;
+        }
+    }
+
+    if (slotIndex == -1)
+    {
+        cout << "Vehicle is registered but no occupied parking slot was found.\n";
+        return;
+    }
+
+    if (parkingSlots[slotIndex].paid)
+    {
+        cout << "Payment already completed.\n";
+        return;
+    }
+
+    UID uid = parkingSlots[slotIndex].uid;
+
+    string currentTime = getCurrentTime();
+
+    int totalHours = hourCalculator(
+        parkingSlots[slotIndex].inTime,
+        currentTime);
+
+    parkingSlots[slotIndex].amountToPay = totalBill(uid, totalHours);
+
+    if (parkingSlots[slotIndex].amountToPay < 0)
+    {
+        cout << "Unable to calculate parking bill.\n";
+        return;
+    }
+
+    cout << "\n---------- PARKING BILL ----------\n";
+    cout << "Vehicle Number : " << plateNumber << '\n';
+    cout << "Parking Hours  : " << totalHours << '\n';
+    cout << "Amount         : Rs. "
+         << parkingSlots[slotIndex].amountToPay << '\n';
+    cout << "----------------------------------\n\n";
+
+    paymentOption(slotIndex, parkingSlots);
+}
+
+void paymentOption(int slotIndex, vector<ParkingSlot> &parkingSlots)
+{
+    cout << "\n1. Pay the amount\n";
+    cout << "2. <- Go Back\n";
+
+    int x;
+    cin >> x;
+
+    switch (x)
+    {
+    case 1:
+        pay(slotIndex, parkingSlots);
+        break;
+
+    case 2:
+        return;
+
+    default:
+        cout << "Please choose a valid option.\n";
+        paymentOption(slotIndex, parkingSlots);
+        break;
+    }
+}
+
+void pay(int slotIndex, vector<ParkingSlot> &parkingSlots)
+{
+    ParkingSlot &slot = parkingSlots[slotIndex];
+
+    if (!slot.occupied)
+    {
+        cout << "Parking slot is not occupied.\n";
+        return;
+    }
+
+    if (slot.paid)
+    {
+        cout << "Payment already completed.\n";
+        return;
+    }
+
+    cout << "\nAmount to pay: Rs. " << slot.amountToPay << '\n';
+    cout << "Confirm payment? (1 = Yes, 0 = No): ";
+
+    int choice;
+    cin >> choice;
+
+    if (choice != 1)
+    {
+        cout << "Payment cancelled.\n";
+        return;
+    }
+
+    slot.paid = true;
+
+    cout << "Payment successful!\n";
+    cout << "You can now take your vehicle out.\n";
+}
 #endif

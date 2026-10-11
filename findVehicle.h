@@ -49,12 +49,12 @@ void ParkingManagementSystem::findVehicle()
     cout << "\n===== Vehicle Details =====\n";
     cout << "Plate Number : " << vehicle.getPlateNumber() << '\n';
     cout << "Owner Name   : " << vehicle.getOwnerName() << '\n';
-    cout << "Vehicle Type : " << vehicle.getVehicleType() << '\n';
+    cout << "Vehicle Type : " << invertVC(vehicle.getVehicleType()) << " (" << vehicle.getVehicleType() << ")\n";
     cout << "Slot Index   : " << slotIndex << '\n';
 
     cout << "\n===== Parking Slot Details =====\n";
     cout << "Floor        : " << uid.getFloor() << '\n';
-    cout << "Slot Type    : " << uid.getSlotType() << '\n';
+    cout << "Slot Type    : " << invertSC(uid.getSlotType()) << " (" << uid.getSlotType() << ")\n";
     cout << "Slot Number  : " << uid.getSlotNumber() << '\n';
 }
 

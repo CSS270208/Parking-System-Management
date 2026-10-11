@@ -116,4 +116,6 @@ inline vector<int> VehicleToSlotsString(const string &type)
     return VehicleToSlotsCode(VC(type));
 }
 
+// slotcode -> dimensions
+
 #endif

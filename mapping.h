@@ -1,6 +1,5 @@
 #ifndef MAPPING_H
 #define MAPPING_H
-
 #include <bits/stdc++.h>
 #include <filesystem>
 #include <ctime>
@@ -22,21 +21,24 @@ string getCurrentTime()
     return ss.str(); // DD-MM-YYY Y  H  H  :  M  M  :  S  S
                      // 123456789 10 11 12 13 14 15 16 17 18
 }
+
 class ParkingSlot
 {
 public:
     UID uid;
     int area;
+
     bool occupied = false;
+    bool paid = false;
+
     string plateNumber;
-    bool paid;
-    double amountToPay ;
+
+    double amountToPay = 0.0;
+
     string inTime;
     string outTime;
 
-    ParkingSlot(UID id, int a) : uid(id), area(a)
-    {
-    }
+    ParkingSlot(UID id, int a) : uid(id), area(a) {}
 };
 
 inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
@@ -83,7 +85,7 @@ inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
 
         int columns = floorMap[0].size();
 
-        for (auto row : floorMap)
+        for (const auto &row : floorMap)
         {
             if (row.size() != columns)
             {
@@ -156,6 +158,9 @@ inline void scanMap(
     for (int f = 0; f < binaryMap.size(); f++)
     {
         const auto &mat = binaryMap[f];
+
+        if (mat.empty() || mat[0].empty())
+            continue;
 
         vector<vector<bool>> visited(
             mat.size(),
