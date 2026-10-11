@@ -7,6 +7,7 @@
 using namespace std;
 
 void print3DMatrix(const vector<vector<vector<int>>> &matrix);
+void showAllBillSchemes();
 
 class Admin;
 class Vehicle;
@@ -20,25 +21,35 @@ private:
     int slot = -1;
 
 public:
-    Vehicle(string plate, int type, string owner) : plateNumber(plate),vehicleType(type),ownerName(owner) {}
+    Vehicle(string plate, int type, string owner)
+        : plateNumber(plate),
+          vehicleType(type),
+          ownerName(owner)
+    {
+    }
 
-    string getPlateNumber() const {
+    string getPlateNumber() const
+    {
         return plateNumber;
     }
 
-    int getVehicleType() const {
+    int getVehicleType() const
+    {
         return vehicleType;
     }
 
-    string getOwnerName() const {
+    string getOwnerName() const
+    {
         return ownerName;
     }
 
-    int getSlot() const {
+    int getSlot() const
+    {
         return slot;
     }
 
-    void setTheSlot(int code) {
+    void setTheSlot(int code)
+    {
         slot = code;
     }
 };
@@ -65,8 +76,9 @@ private:
         cout << "3. Take my vehicle out\n";
         cout << "4. Pay the current amount\n";
         cout << "5. Admin Control\n";
-        cout << "6. Add/Change Maps\n";
-        cout << "7. Turn off\n";
+        cout << "6. See Parking Cost\n";
+        cout << "7. Add/Change Maps\n";
+        cout << "8. Turn off\n";
         cout << "Choose an option: ";
     }
 
@@ -125,10 +137,14 @@ public:
                 break;
 
             case 6:
-                cout << "Map modification is not implemented yet.\n";
+                showAllBillSchemes();
                 break;
 
             case 7:
+                cout << "Map modification is not implemented yet.\n";
+                break;
+
+            case 8:
                 off();
                 break;
 
@@ -144,10 +160,8 @@ public:
         cout << "Parking system turned off.\n";
     }
 
-    // Admin can access all private members of this class.
     friend class Admin;
 
-    // Existing operation functions retain their friend access.
     friend void ParkingManagementSystem::bookParking();
     friend void ParkingManagementSystem::findVehicle();
     friend void ParkingManagementSystem::takeVehicleOut();

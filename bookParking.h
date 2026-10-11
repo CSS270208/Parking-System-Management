@@ -6,6 +6,7 @@
 #include "helper.h"
 #include "uid.h"
 #include "mapping.h"
+#include "payAmount.h"
 
 using namespace std;
 
@@ -19,6 +20,7 @@ void ParkingManagementSystem::bookParking()
     cin >> plateNumber;
     toLowerString(plateNumber);
 
+    // Check whether the vehicle is already registered.
     if (vehicles.find(plateNumber) != vehicles.end())
     {
         cout << "Vehicle already registered.\n";
@@ -142,7 +144,11 @@ void ParkingManagementSystem::bookParking()
     }
     }
 
-    cout << "Enter owner's name: ";
+    // Display the billing scheme for the selected slot.
+    showBillScheme(chosenSlot);
+
+    // Get the owner's name.
+    cout << "\nEnter owner's name: ";
 
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     getline(cin, ownerName);
@@ -155,6 +161,7 @@ void ParkingManagementSystem::bookParking()
         return;
     }
 
+    // Create the vehicle object.
     Vehicle vehicle(plateNumber, vehicleType, ownerName);
 
     cout << "\nVehicle Details:\n";
@@ -172,10 +179,13 @@ void ParkingManagementSystem::bookParking()
         cout << "Vehicle Type: Not specified\n";
     }
 
-    cout << "Owner Name: " << vehicle.getOwnerName() << '\n';
+    cout << "Owner Name: "
+         << vehicle.getOwnerName() << '\n';
 
-    cout << "Selected Slot Type: " << invertSC(chosenSlot) << '\n';
+    cout << "Selected Slot Type: "
+         << invertSC(chosenSlot) << '\n';
 
+    // Find and assign the first available physical slot.
     for (int i = 0; i < parkingSlots.size(); i++)
     {
         if (parkingSlots[i].uid.getSlotType() != chosenSlot)
@@ -198,6 +208,9 @@ void ParkingManagementSystem::bookParking()
 
         cout << "Assigned UID: "
              << parkingSlots[i].uid.toString() << '\n';
+
+        cout << "Entry Time: "
+             << parkingSlots[i].inTime << '\n';
 
         return;
     }

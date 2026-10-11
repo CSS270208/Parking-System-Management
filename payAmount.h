@@ -338,4 +338,89 @@ void pay(int slotIndex, vector<ParkingSlot> &parkingSlots)
     cout << "Payment successful!\n";
     cout << "You can now take your vehicle out.\n";
 }
+
+void showBillScheme(int slotType)
+{
+    cout << "\n========== PARKING BILL SCHEME ==========\n";
+
+    switch (slotType)
+    {
+    case 0:
+        cout << "Slot Type: " << invertSC(slotType) << '\n';
+        cout << "First Hour: Rs. 10\n";
+        cout << "Each Additional Hour: Rs. 5\n";
+        cout << "Maximum Per 24 Hours: Rs. 60\n";
+        break;
+
+    case 1:
+        cout << "Slot Type: " << invertSC(slotType) << '\n';
+        cout << "First Hour: Rs. 30\n";
+        cout << "Each Additional Hour: Rs. 20\n";
+        cout << "Maximum Per 24 Hours: Rs. 300\n";
+        break;
+
+    case 2:
+        cout << "Slot Type: " << invertSC(slotType) << '\n';
+        cout << "First Hour: Rs. 60\n";
+        cout << "Each Additional Hour: Rs. 40\n";
+        cout << "Maximum Per 24 Hours: Rs. 600\n";
+        break;
+
+    case 3:
+        cout << "Slot Type: " << invertSC(slotType) << '\n';
+        cout << "First Hour: Rs. 30\n";
+        cout << "Each Additional Hour: Rs. 20\n";
+        cout << "Maximum Per 24 Hours: Rs. 300\n";
+        break;
+
+    default:
+        cout << "Billing information unavailable.\n";
+        break;
+    }
+
+    cout << "==========================================\n";
+}
+
+void showAllBillSchemes()
+{
+    cout << "\n";
+    cout << "====================================================================\n";
+    cout << "          PARKING BILLING SCHEME                \n";
+    cout << "====================================================================\n";
+
+    cout << left
+         << setw(18) << "Slot Type"
+         << setw(18) << "First Hour"
+         << setw(18) << "Additional Hour"
+         << "Daily Maximum\n";
+
+    cout << "--------------------------------------------------------------------\n";
+
+    cout << left
+         << setw(18) << invertSC(0)
+         << setw(18) << "Rs. 10"
+         << setw(18) << "Rs. 5"
+         << "Rs. 60\n";
+
+    cout << left
+         << setw(18) << invertSC(1)
+         << setw(18) << "Rs. 30"
+         << setw(18) << "Rs. 20"
+         << "Rs. 300\n";
+
+    cout << left
+         << setw(18) << invertSC(2)
+         << setw(18) << "Rs. 60"
+         << setw(18) << "Rs. 40"
+         << "Rs. 600\n";
+
+    cout << left
+         << setw(18) << invertSC(3)
+         << setw(18) << "Rs. 30"
+         << setw(18) << "Rs. 20"
+         << "Rs. 300\n";
+
+    cout << "====================================================================\n\n";
+}
+
 #endif
