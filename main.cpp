@@ -82,12 +82,12 @@ private:
         cout << "Choose an option: ";
     }
 
-    void bookParking();
-    void findVehicle();
-    void takeVehicleOut();
-    void payAmount();
-    void payAmount(string);
-    void admin();
+    void bookParking(); // almost done
+    void findVehicle(); // almost done
+    void takeVehicleOut(); // almost done
+    void payAmount(); // feels not perfect
+    void payAmount(string); // feels not perfect
+    void admin(); // pending
 
 public:
     void on()

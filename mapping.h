@@ -130,10 +130,7 @@ inline int sizeOfSlot(
             int nr = r + dr[i];
             int nc = c + dc[i];
 
-            if (nr >= 0 && nr < rows &&
-                nc >= 0 && nc < cols &&
-                mat[nr][nc] == 1 &&
-                !visited[nr][nc])
+            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && mat[nr][nc] == 1 && !visited[nr][nc])
             {
                 visited[nr][nc] = true;
                 q.push({nr, nc});
@@ -145,10 +142,7 @@ inline int sizeOfSlot(
     return count;
 }
 
-inline void scanMap(
-    const vector<vector<vector<int>>> &binaryMap,
-    vector<ParkingSlot> &parkingSlots,
-    unordered_map<string, int> &slotIndex)
+inline void scanMap(const vector<vector<vector<int>>> &binaryMap, vector<ParkingSlot> &parkingSlots, unordered_map<string, int> &slotIndex)
 {
     parkingSlots.clear();
     slotIndex.clear();
@@ -162,9 +156,7 @@ inline void scanMap(
         if (mat.empty() || mat[0].empty())
             continue;
 
-        vector<vector<bool>> visited(
-            mat.size(),
-            vector<bool>(mat[0].size(), false));
+        vector<vector<bool>> visited(mat.size(), vector<bool>(mat[0].size(), false));
 
         for (int r = 0; r < mat.size(); r++)
         {
@@ -179,8 +171,7 @@ inline void scanMap(
 
                 if (slotType == -1)
                 {
-                    cout << "Unknown area: " << area
-                         << " on floor " << f + 1 << '\n';
+                    cout << "Unknown area: " << area << " on floor " << f + 1 << '\n';
                     continue;
                 }
 

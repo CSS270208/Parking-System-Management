@@ -15,7 +15,7 @@ void ParkingManagementSystem::takeVehicleOut()
 {
     cout << "\n-> Take Vehicle Out Selected <-\n";
 
-    cout << "\nEnter your vehicle Number : ";
+    cout << "\nEnter your vehicle Number: ";
     string plateNumber;
     cin >> plateNumber;
 
@@ -92,11 +92,14 @@ void ParkingManagementSystem::takeVehicleOut()
     cout << "\n===== Vehicle Details =====\n";
     cout << "Plate Number : " << vehicle.getPlateNumber() << '\n';
     cout << "Owner Name   : " << vehicle.getOwnerName() << '\n';
-    cout << "Vehicle Type : " << vehicle.getVehicleType() << '\n';
+    cout << "Vehicle Type : " << invertVC(vehicle.getVehicleType()) << '\n';
     cout << "Slot Index   : " << slotIndex << '\n';
 
     resetInfo(slotIndex, parkingSlots);
-    vehicle.setTheSlot(-1);
+
+    vehicles.erase(plateNumber);
+
+    cout << "Vehicle successfully removed from the parking system.\n";
 }
 
 void resetInfo(int slotIndex, vector<ParkingSlot> &parkingSlots)

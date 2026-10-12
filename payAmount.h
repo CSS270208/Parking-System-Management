@@ -156,7 +156,7 @@ void pay(int slotIndex, vector<ParkingSlot> &parkingSlots);
 
 void ParkingManagementSystem::payAmount()
 {
-    cout << "Enter your car number\n";
+    cout << "Enter your Vehicle number :";
 
     string plateNumber;
     cin >> plateNumber;
@@ -213,6 +213,8 @@ void ParkingManagementSystem::payAmount()
 
     cout << "\n---------- PARKING BILL ----------\n";
     cout << "Vehicle Number : " << plateNumber << '\n';
+    cout << "InTime         : " << parkingSlots[slotIndex].inTime << '\n';
+    cout << "InTime         : " << currentTime << '\n';
     cout << "Parking Hours  : " << totalHours << '\n';
     cout << "Amount         : Rs. "
          << parkingSlots[slotIndex].amountToPay << '\n';
@@ -273,6 +275,8 @@ void ParkingManagementSystem::payAmount(string plateNumber)
 
     cout << "\n---------- PARKING BILL ----------\n";
     cout << "Vehicle Number : " << plateNumber << '\n';
+    cout << "InTime         : " << parkingSlots[slotIndex].inTime << '\n';
+    cout << "InTime         : " << currentTime << '\n';
     cout << "Parking Hours  : " << totalHours << '\n';
     cout << "Amount         : Rs. "
          << parkingSlots[slotIndex].amountToPay << '\n';
