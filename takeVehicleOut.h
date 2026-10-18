@@ -14,9 +14,10 @@ void resetInfo(int slotIndex, vector<ParkingSlot> &parkingSlots);
 void ParkingManagementSystem::takeVehicleOut()
 {
     cout << "\n-> Take Vehicle Out Selected <-\n";
+    cout << "Enter your vehicle number: ";
 
-    cout << "\nEnter your vehicle Number: ";
     string plateNumber;
+
     cin >> plateNumber;
 
     toLowerString(plateNumber);
@@ -25,81 +26,102 @@ void ParkingManagementSystem::takeVehicleOut()
 
     if (it == vehicles.end())
     {
-        cout << "Vehicle Not Found\n";
+        cout << "Vehicle not found.\n";
         return;
     }
 
-    Vehicle &vehicle = it->second;
+    int index = -1;
 
-    int slotIndex = -1;
-
-    for (int i = 0; i < parkingSlots.size(); i++)
+    for (int i = 0;
+         i < static_cast<int>(parkingSlots.size());
+         i++)
     {
         if (parkingSlots[i].occupied &&
             parkingSlots[i].plateNumber == plateNumber)
         {
-            slotIndex = i;
+            index = i;
             break;
         }
     }
 
-    if (slotIndex == -1)
+    if (index == -1)
     {
-        cout << "Vehicle is registered but no occupied parking slot was found.\n";
+        cout << "No active parking session found.\n";
         return;
     }
 
-    if (!parkingSlots[slotIndex].paid)
+    ParkingSlot &slot = parkingSlots[index];
+
+    if (!slot.paid)
     {
-        while (true)
-        {
-            cout << "\nYou need to pay before taking out your vehicle.\n";
-            cout << "1. Pay the Amount\n";
-            cout << "2. Go Back to Main Menu\n";
-            cout << "Choose an option: ";
-
-            int choice;
-            cin >> choice;
-
-            switch (choice)
-            {
-            case 1:
-                payAmount(plateNumber);
-
-                if (parkingSlots[slotIndex].paid)
-                    break;
-
-                continue;
-
-            case 2:
-                return;
-
-            default:
-                cout << "Please choose a valid option.\n";
-                continue;
-            }
-
-            break;
-        }
+        cout << "Payment is required before exiting.\n";
+        cout << "Please use option 4 to pay the amount.\n";
+        return;
     }
 
-    if (!parkingSlots[slotIndex].paid)
+    string outTime = getCurrentTime();
+
+    // Save the completed session before releasing the slot.
+    bool historySaved = FileManager::appendHistory(
+        plateNumber,
+        slot.uid,
+        slot.inTime,
+        outTime);
+
+    if (!historySaved)
     {
-        cout << "Payment is required before taking out your vehicle.\n";
+        cout << "Unable to save parking history.\n";
+        cout << "Vehicle has not been removed.\n";
         return;
     }
 
     cout << "\n===== Vehicle Details =====\n";
-    cout << "Plate Number : " << vehicle.getPlateNumber() << '\n';
-    cout << "Owner Name   : " << vehicle.getOwnerName() << '\n';
-    cout << "Vehicle Type : " << invertVC(vehicle.getVehicleType()) << '\n';
-    cout << "Slot Index   : " << slotIndex << '\n';
 
-    resetInfo(slotIndex, parkingSlots);
+    cout << "Plate Number : "
+         << it->second.getPlateNumber() << '\n';
 
-    vehicles.erase(plateNumber);
+    cout << "Owner Name   : "
+         << it->second.getOwnerName() << '\n';
 
-    cout << "Vehicle successfully removed from the parking system.\n";
+    cout << "Vehicle Type : "
+         << invertVC(it->second.getVehicleType()) << '\n';
+
+    cout << "Floor        : "
+         << slot.uid.getFloor() << '\n';
+
+    cout << "Slot Number  : "
+         << slot.uid.getSlotNumber() << '\n';
+
+    cout << "Entry Time   : "
+         << slot.inTime << '\n';
+
+    cout << "Exit Time    : "
+         << outTime << '\n';
+
+    // Release the physical slot.
+    slot.occupied = false;
+    slot.plateNumber.clear();
+    slot.inTime.clear();
+    slot.outTime = outTime;
+    slot.amountToPay = 0.0;
+    slot.paid = false;
+
+    // The vehicle remains registered.
+    it->second.setTheSlot(-1);
+
+    // Persist the updated parking state.
+    bool vehiclesSaved =
+        FileManager::saveVehicles(vehicles);
+
+    bool sessionsSaved =
+        FileManager::saveActiveSessions(parkingSlots);
+
+    if (!vehiclesSaved || !sessionsSaved)
+    {
+        cout << "Warning: Failed to save the latest parking state.\n";
+    }
+
+    cout << "\nThanks for coming! Be sure to visit again.\n";
 }
 
 void resetInfo(int slotIndex, vector<ParkingSlot> &parkingSlots)

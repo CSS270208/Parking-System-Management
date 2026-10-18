@@ -311,6 +311,13 @@ void paymentOption(int slotIndex, vector<ParkingSlot> &parkingSlots)
 
 void pay(int slotIndex, vector<ParkingSlot> &parkingSlots)
 {
+    if (slotIndex < 0 ||
+        slotIndex >= static_cast<int>(parkingSlots.size()))
+    {
+        cout << "Invalid parking slot.\n";
+        return;
+    }
+
     ParkingSlot &slot = parkingSlots[slotIndex];
 
     if (!slot.occupied)
@@ -325,11 +332,31 @@ void pay(int slotIndex, vector<ParkingSlot> &parkingSlots)
         return;
     }
 
-    cout << "\nAmount to pay: Rs. " << slot.amountToPay << '\n';
+    if (slot.amountToPay < 0)
+    {
+        cout << "Invalid payment amount.\n";
+        return;
+    }
+
+    cout << "\nAmount to pay: Rs. "
+            << fixed << setprecision(2)
+            << slot.amountToPay << '\n';
+
     cout << "Confirm payment? (1 = Yes, 0 = No): ";
 
     int choice;
-    cin >> choice;
+
+    if (!(cin >> choice))
+    {
+        cin.clear();
+
+        cin.ignore(
+            numeric_limits<streamsize>::max(),
+            '\n');
+
+        cout << "Invalid input.\n";
+        return;
+    }
 
     if (choice != 1)
     {
@@ -337,9 +364,27 @@ void pay(int slotIndex, vector<ParkingSlot> &parkingSlots)
         return;
     }
 
+    string paymentTime = getCurrentTime();
+
+    bool recorded = FileManager::appendPayment(
+        slot.plateNumber,
+        slot.uid,
+        slot.inTime,
+        paymentTime,
+        slot.amountToPay);
+
+    if (!recorded)
+    {
+        cout << "Payment could not be recorded. "
+                << "Please try again.\n";
+
+        return;
+    }
+
     slot.paid = true;
 
     cout << "Payment successful!\n";
+    cout << "Payment Time: " << paymentTime << '\n';
     cout << "You can now take your vehicle out.\n";
 }
 

@@ -53,7 +53,7 @@ public:
         slot = code;
     }
 };
-
+#include "FileManager.h"
 class ParkingManagementSystem
 {
 private:
@@ -89,6 +89,34 @@ private:
     void payAmount(string); // feels not perfect
     void admin(); // pending
 
+    void loadPersistentData()
+    {
+        if (!FileManager::loadVehicles(vehicles))
+        {
+            cerr << "Warning: Could not load registered vehicles.\n";
+        }
+
+        if (!FileManager::loadActiveSessions(
+                parkingSlots,
+                vehicles))
+        {
+            cerr << "Warning: Could not restore active sessions.\n";
+        }
+    }
+
+    void savePersistentData()
+    {
+        if (!FileManager::saveVehicles(vehicles))
+        {
+            cerr << "Warning: Could not save vehicles.\n";
+        }
+
+        if (!FileManager::saveActiveSessions(parkingSlots))
+        {
+            cerr << "Warning: Could not save active sessions.\n";
+        }
+    }
+
 public:
     void on()
     {
@@ -101,7 +129,21 @@ public:
         scanMap(binaryMap, parkingSlots, slotIndex);
 
         cout << "\nDetected physical slots: "
-             << parkingSlots.size() << '\n';
+                << parkingSlots.size() << '\n';
+
+        // Restore registered vehicles and active sessions.
+        loadPersistentData();
+
+        int occupied = 0;
+
+        for (const ParkingSlot &slot : parkingSlots)
+        {
+            if (slot.occupied)
+                occupied++;
+        }
+
+        cout << "Restored active sessions: "
+                << occupied << '\n';
 
         running = true;
 
@@ -112,7 +154,20 @@ public:
             showMenu();
 
             int choice;
-            cin >> choice;
+
+            if (!(cin >> choice))
+            {
+                if (cin.eof())
+                    break;
+
+                cin.clear();
+                cin.ignore(
+                    numeric_limits<streamsize>::max(),
+                    '\n');
+
+                cout << "Invalid input. Enter a number.\n";
+                continue;
+            }
 
             switch (choice)
             {
@@ -152,6 +207,9 @@ public:
                 cout << "Please choose a valid option.\n";
             }
         }
+
+        // Save the latest state before shutting down.
+        savePersistentData();
     }
 
     void off()
@@ -161,6 +219,7 @@ public:
     }
 
     friend class Admin;
+    friend class FileManager;
 
     friend void ParkingManagementSystem::bookParking();
     friend void ParkingManagementSystem::findVehicle();

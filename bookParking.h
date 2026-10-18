@@ -202,7 +202,28 @@ void ParkingManagementSystem::bookParking()
 
         vehicle.setTheSlot(i);
 
-        vehicles.emplace(plateNumber, vehicle);
+        auto result = vehicles.emplace(plateNumber, vehicle);
+
+        if (!result.second)
+        {
+            parkingSlots[i].occupied = false;
+            parkingSlots[i].plateNumber.clear();
+            parkingSlots[i].inTime.clear();
+
+            cout << "Vehicle registration failed.\n";
+            return;
+        }
+
+        // Persist the new registration and active session.
+        bool vehiclesSaved = FileManager::saveVehicles(vehicles);
+
+        bool sessionsSaved =
+            FileManager::saveActiveSessions(parkingSlots);
+
+        if (!vehiclesSaved || !sessionsSaved)
+        {
+            cout << "Warning: Parking data could not be fully saved.\n";
+        }
 
         cout << "\nParking successful.\n";
 
