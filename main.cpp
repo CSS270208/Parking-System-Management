@@ -8,6 +8,7 @@ using namespace std;
 
 void print3DMatrix(const vector<vector<vector<int>>> &matrix);
 void showAllBillSchemes();
+void showBillScheme(int slotType);
 
 class Admin;
 class Vehicle;
@@ -22,9 +23,7 @@ private:
 
 public:
     Vehicle(string plate, int type, string owner)
-        : plateNumber(plate),
-          vehicleType(type),
-          ownerName(owner)
+        : plateNumber(plate), vehicleType(type), ownerName(owner)
     {
     }
 
@@ -53,7 +52,9 @@ public:
         slot = code;
     }
 };
+
 #include "FileManager.h"
+
 class ParkingManagementSystem
 {
 private:
@@ -74,20 +75,23 @@ private:
         cout << "1. Book a new parking\n";
         cout << "2. Find my vehicle\n";
         cout << "3. Take my vehicle out\n";
-        cout << "4. Pay the current amount\n";
-        cout << "5. Admin Control\n";
-        cout << "6. See Parking Cost\n";
-        cout << "7. Add/Change Maps\n";
-        cout << "8. Turn off\n";
+        cout << "4. See Parking Cost\n";
+        cout << "5. Pay the current amount\n";
+        cout << "6. Admin Control\n";
+        cout << "7. Turn off\n";
         cout << "Choose an option: ";
     }
 
-    void bookParking(); // almost done
-    void findVehicle(); // almost done
-    void takeVehicleOut(); // almost done
-    void payAmount(); // feels not perfect
-    void payAmount(string); // feels not perfect
-    void admin(); // pending
+    void bookParking();
+    void findVehicle();
+
+    void takeVehicleOut();
+    void takeVehicleOut(string plateNumber);
+
+    void payAmount();
+    void payAmount(string plateNumber);
+
+    void admin();
 
     void loadPersistentData()
     {
@@ -96,9 +100,7 @@ private:
             cerr << "Warning: Could not load registered vehicles.\n";
         }
 
-        if (!FileManager::loadActiveSessions(
-                parkingSlots,
-                vehicles))
+        if (!FileManager::loadActiveSessions(parkingSlots, vehicles))
         {
             cerr << "Warning: Could not restore active sessions.\n";
         }
@@ -129,9 +131,8 @@ public:
         scanMap(binaryMap, parkingSlots, slotIndex);
 
         cout << "\nDetected physical slots: "
-                << parkingSlots.size() << '\n';
+             << parkingSlots.size() << endl;
 
-        // Restore registered vehicles and active sessions.
         loadPersistentData();
 
         int occupied = 0;
@@ -143,7 +144,7 @@ public:
         }
 
         cout << "Restored active sessions: "
-                << occupied << '\n';
+             << occupied << endl;
 
         running = true;
 
@@ -161,9 +162,7 @@ public:
                     break;
 
                 cin.clear();
-                cin.ignore(
-                    numeric_limits<streamsize>::max(),
-                    '\n');
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
                 cout << "Invalid input. Enter a number.\n";
                 continue;
@@ -184,22 +183,18 @@ public:
                 break;
 
             case 4:
-                payAmount();
-                break;
-
-            case 5:
-                admin();
-                break;
-
-            case 6:
                 showAllBillSchemes();
                 break;
 
-            case 7:
-                cout << "Map modification is not implemented yet.\n";
+            case 5:
+                payAmount();
                 break;
 
-            case 8:
+            case 6:
+                admin();
+                break;
+
+            case 7:
                 off();
                 break;
 
@@ -208,7 +203,6 @@ public:
             }
         }
 
-        // Save the latest state before shutting down.
         savePersistentData();
     }
 
@@ -220,30 +214,24 @@ public:
 
     friend class Admin;
     friend class FileManager;
-
-    friend void ParkingManagementSystem::bookParking();
-    friend void ParkingManagementSystem::findVehicle();
-    friend void ParkingManagementSystem::takeVehicleOut();
-    friend void ParkingManagementSystem::payAmount();
-    friend void ParkingManagementSystem::payAmount(string);
 };
 
-// Include implementations after the class definition.
 #include "bookParking.h"
+#include "payAmount.h"
 #include "takeVehicleOut.h"
 #include "findVehicle.h"
-#include "payAmount.h"
 #include "admin.h"
 
-void print3DMatrix(const vector<vector<vector<int>>> &matrix)
+void print3DMatrix(
+    const vector<vector<vector<int>>> &matrix)
 {
-    for (int f = 0; f < matrix.size(); f++)
+    for (int f = 0; f < (int)matrix.size(); f++)
     {
         cout << "\nFloor " << f + 1 << ":\n";
 
-        for (int r = 0; r < matrix[f].size(); r++)
+        for (int r = 0; r < (int)matrix[f].size(); r++)
         {
-            for (int c = 0; c < matrix[f][r].size(); c++)
+            for (int c = 0; c < (int)matrix[f][r].size(); c++)
             {
                 cout << matrix[f][r][c] << ' ';
             }

@@ -1,5 +1,6 @@
 #ifndef MAPPING_H
 #define MAPPING_H
+
 #include <bits/stdc++.h>
 #include <filesystem>
 #include <ctime>
@@ -10,16 +11,15 @@
 
 using namespace std;
 
-string getCurrentTime()
+inline string getCurrentTime()
 {
-
     time_t now = time(nullptr);
     tm *local = localtime(&now);
+
     stringstream ss;
     ss << put_time(local, "%d-%m-%Y %H:%M:%S");
-    // DD-MM-YYYY HH:MM:SS
-    return ss.str(); // DD-MM-YYY Y  H  H  :  M  M  :  S  S
-                     // 123456789 10 11 12 13 14 15 16 17 18
+
+    return ss.str();
 }
 
 class ParkingSlot
@@ -38,7 +38,11 @@ public:
     string inTime;
     string outTime;
 
-    ParkingSlot(UID id, int a) : uid(id), area(a) {}
+    string lastPaymentTime;
+
+    ParkingSlot(UID id, int a) : uid(id), area(a)
+    {
+    }
 };
 
 inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
@@ -69,7 +73,8 @@ inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
             {
                 if (value != 0 && value != 1)
                 {
-                    cout << "Invalid map value in " << file << '\n';
+                    cout << "Invalid map value in "
+                         << file << '\n';
                     return false;
                 }
 
@@ -89,7 +94,8 @@ inline bool loadMap(vector<vector<vector<int>>> &binaryMap)
         {
             if (row.size() != columns)
             {
-                cout << "Inconsistent row width in " << file << '\n';
+                cout << "Inconsistent row width in "
+                     << file << '\n';
                 return false;
             }
         }
@@ -122,15 +128,23 @@ inline int sizeOfSlot(
 
     while (!q.empty())
     {
-        auto [r, c] = q.front();
+        auto current = q.front();
         q.pop();
+
+        int r = current.first;
+        int c = current.second;
 
         for (int i = 0; i < 4; i++)
         {
             int nr = r + dr[i];
             int nc = c + dc[i];
 
-            if (nr >= 0 && nr < rows && nc >= 0 && nc < cols && mat[nr][nc] == 1 && !visited[nr][nc])
+            if (nr >= 0 &&
+                nr < rows &&
+                nc >= 0 &&
+                nc < cols &&
+                mat[nr][nc] == 1 &&
+                !visited[nr][nc])
             {
                 visited[nr][nc] = true;
                 q.push({nr, nc});
@@ -142,25 +156,32 @@ inline int sizeOfSlot(
     return count;
 }
 
-inline void scanMap(const vector<vector<vector<int>>> &binaryMap, vector<ParkingSlot> &parkingSlots, unordered_map<string, int> &slotIndex)
+inline void scanMap(
+    const vector<vector<vector<int>>> &binaryMap,
+    vector<ParkingSlot> &parkingSlots,
+    unordered_map<string, int> &slotIndex)
 {
     parkingSlots.clear();
     slotIndex.clear();
 
-    vector<vector<int>> counters(binaryMap.size(), vector<int>(4, 0));
+    vector<vector<int>> counters(
+        binaryMap.size(),
+        vector<int>(4, 0));
 
-    for (int f = 0; f < binaryMap.size(); f++)
+    for (int f = 0; f < (int)binaryMap.size(); f++)
     {
         const auto &mat = binaryMap[f];
 
         if (mat.empty() || mat[0].empty())
             continue;
 
-        vector<vector<bool>> visited(mat.size(), vector<bool>(mat[0].size(), false));
+        vector<vector<bool>> visited(
+            mat.size(),
+            vector<bool>(mat[0].size(), false));
 
-        for (int r = 0; r < mat.size(); r++)
+        for (int r = 0; r < (int)mat.size(); r++)
         {
-            for (int c = 0; c < mat[r].size(); c++)
+            for (int c = 0; c < (int)mat[r].size(); c++)
             {
                 if (mat[r][c] == 0 || visited[r][c])
                     continue;
@@ -171,7 +192,8 @@ inline void scanMap(const vector<vector<vector<int>>> &binaryMap, vector<Parking
 
                 if (slotType == -1)
                 {
-                    cout << "Unknown area: " << area << " on floor " << f + 1 << '\n';
+                    cout << "Unknown area: " << area
+                         << " on floor " << f + 1 << '\n';
                     continue;
                 }
 
@@ -182,6 +204,7 @@ inline void scanMap(const vector<vector<vector<int>>> &binaryMap, vector<Parking
                 int index = parkingSlots.size();
 
                 parkingSlots.push_back({uid, area});
+
                 slotIndex[uid.toString()] = index;
             }
         }

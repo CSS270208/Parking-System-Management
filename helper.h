@@ -82,19 +82,23 @@ inline string invertSC(int x)
 
 inline vector<int> VehicleToSlotsCode(int code)
 {
-    if (code == 0)
+    switch (code)
+    {
+    case 0:
         return {0, 1};
 
-    if (code == 1)
+    case 1:
         return {1};
 
-    if (code == 2)
+    case 2:
         return {2};
 
-    if (code == 3)
-        return {2, 3};
+    case 3:
+        return {2};
 
-    return {};
+    default:
+        return {};
+    }
 }
 
 inline int slotTypeFromArea(int area)
@@ -115,7 +119,5 @@ inline vector<int> VehicleToSlotsString(const string &type)
 {
     return VehicleToSlotsCode(VC(type));
 }
-
-// slotcode -> dimensions
 
 #endif

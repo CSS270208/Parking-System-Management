@@ -12,7 +12,10 @@ private:
     int slotNumber;
 
 public:
-    UID(int floor, int slotType, int slotNumber): floor(floor), slotType(slotType), slotNumber(slotNumber){}
+    UID(int floor, int slotType, int slotNumber)
+        : floor(floor), slotType(slotType), slotNumber(slotNumber)
+    {
+    }
 
     int getFloor() const
     {
@@ -31,17 +34,23 @@ public:
 
     string toString() const
     {
-        return "F" + to_string(floor) + "-T" + to_string(slotType) + "-S" + to_string(slotNumber);
+        return "F" + to_string(floor) +
+               "-T" + to_string(slotType) +
+               "-S" + to_string(slotNumber);
     }
 
     bool operator==(const UID &other) const
     {
-        return floor == other.floor && slotType == other.slotType && slotNumber == other.slotNumber;
+        return floor == other.floor &&
+               slotType == other.slotType &&
+               slotNumber == other.slotNumber;
     }
 
     friend ostream &operator<<(ostream &out, const UID &obj)
     {
-        out << "F" << obj.floor << "-T" << obj.slotType << "-S" << obj.slotNumber;
+        out << "F" << obj.floor
+            << "-T" << obj.slotType
+            << "-S" << obj.slotNumber;
 
         return out;
     }
